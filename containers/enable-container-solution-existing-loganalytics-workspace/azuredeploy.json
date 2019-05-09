@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "LogAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics Workspace name"
+            }
+        }
+    },
+    "variables": {
+        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('LogAnalyticsWorkspaceName'))]",
+        "containerSolutionName": "[concat(parameters('LogAnalyticsWorkspaceName'), '-containers')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[variables('containerSolutionName')]",
+            "location": "[resourceGroup().location]",
+            "plan": {
+                "name": "[variables('containerSolutionName')]",
+                "product": "[concat('OMSGallery/', 'ContainerInsights')]",
+                "promotionCode": "",
+                "publisher": "Microsoft"
+            },
+            "properties": {
+                "workspaceResourceId": "[variables('workspaceResourceId')]"
+            }
+        }
+    ],
+    "outputs": {}
+}
